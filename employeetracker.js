@@ -9,9 +9,9 @@ const connection = mysql.createConnection({
     database: 'employee_DB',
 });
 
-const department=require ('department.js');
-const role=require ('role.js');
-const employee=require('employee.js');
+const department=require ('./lib/department');
+const role=require ('./lib/role');
+const employee=require('./lib/employee');
 
 connection.connect((err) => {
     if (err) throw err;
@@ -80,10 +80,13 @@ const add=()=>{
         .then((select)=>{
             switch(select.add){
                 case 'Department':
+                    department.add();
                     break;
                 case 'Employee Role':
+                    role.add();
                     break;
                 case 'Employee':
+                    employee.add();
                     break;
                 case 'Go Back':
                     dbSearch();
@@ -110,12 +113,16 @@ const view=()=>{
         .then((select)=>{
             switch(select.view){
                 case 'Employee by Department':
+                    employee.view('Department');
                     break;
                 case 'Employee by  Role':
+                    employee.view('Role');
                     break;
                 case 'Employee by Manager':
+                    employee.view('Manager');
                     break;
                 case 'View all Employees':
+                    //query to show all employees
                     break;
                 case 'Go Back':
                     dbSearch();
@@ -142,10 +149,13 @@ const update=()=>{
         .then((select)=>{
             switch(select.update){
                 case 'Department':
+                    department.update();
                     break;
                 case 'Employee Role':
+                    role.update();
                     break;
                 case 'Employee':
+                    employee.update();
                     break;
                 case 'Go Back':
                     dbSearch();
@@ -172,10 +182,13 @@ const remove=()=>{
         .then((select)=>{
             switch(select.remove){
                 case 'Department':
+                    department.remove();
                     break;
                 case 'Employee Role':
+                    role.remove();
                     break;
                 case 'Employee':
+                    employee.remove();
                     break;
                 case 'Go Back':
                     dbSearch();
@@ -192,10 +205,11 @@ const budget=()=>{
             type: 'list',
             message: 'Select the department whose budget you would like to see',
             choices: [
+                //Use query to display all current departments and go back option
             ]
         })
         .then((select)=>{
-            
+                //Use query to provide budget for the department chosen
         })
 
 }
