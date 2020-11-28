@@ -27,10 +27,8 @@ const dbSearch=()=>{
             message: 'What would you like to do?',
             choices: [
                 'Add department, role, or employee',
-                'View employees by department, role, by manager or all employees',
-                'Update the role or manager of an employee',
-                'Delete a department, employee role, or employee',
-                'View the budget of an individual department',
+                'View departments, roles, or employees',
+                'Update an employee role',
                 'Exit'
             ]
         })
@@ -40,20 +38,12 @@ const dbSearch=()=>{
                     add();
                     break;
 
-                case 'View employees by department, role, by manager or all employees':
+                case 'View departments, roles, or employees':
                     view();
                     break;
 
-                case 'Update the role or manager of an employee':
+                case 'Update an employee role':
                     update();
-                    break;
-
-                case 'Delete a department, employee role, or employee':
-                    remove();
-                    break;
-
-                case 'View the budget of an individual department':
-                    budget();
                     break;
 
                 case 'Exit':
@@ -113,31 +103,38 @@ const view=()=>{
             type: 'list',
             message: 'What would you like to view?',
             choices: [
-                'Employee by Department',
-                'Employee by Role',
-                'Employee by Manager',
-                'View all Employees',
+                'Departments',
+                'Employee Roles',
+                'Employees',
                 'Go Back'
             ]
         })
         .then((select)=>{
             switch(select.view){
-                case 'Employee by Department':
-                    employee.view('Department');
+                case 'Departments':
+                    connection.query(department.view(),(err,res)=>{
+                        if (err) throw err;
+                        cTable(res);
+                    })
                     break;
-                case 'Employee by  Role':
-                    employee.view('Role');
+                case 'Role':
+                    console.log('Current employee roles')
+                    connection.query(role.view(),(err,res)=>{
+                        if (err) throw err;
+                        cTable(res);
+                    })
                     break;
-                case 'Employee by Manager':
-                    employee.view('Manager');
-                    break;
-                case 'View all Employees':
-                    //query to show all employees
+                case 'Employees':
+                    connection.query(employee.view(),(err,res)=>{
+                        if (err) throw err;
+                        cTable(res);
+                    })
                     break;
                 case 'Go Back':
                     dbSearch();
                     break;
             }
+            dbSearch();
         })
 
 }
