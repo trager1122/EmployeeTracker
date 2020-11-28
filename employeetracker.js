@@ -80,22 +80,32 @@ const add=()=>{
         .then((select)=>{
             switch(select.add){
                 case 'Department':
-                    department.add();
+                    connection.query(department.add(),(err,res)=>{
+                        if (err) throw err;
+                        else console.log('Department successfully added!');
+                   })
                     break;
                 case 'Employee Role':
-                    role.add();
+                    connection.query(role.add(),(err,res)=>{
+                        if (err) throw err;
+                        else console.log('Employee Role successfully added!');
+                   })
                     break;
                 case 'Employee':
-                    employee.add();
+                    connection.query(employee.add(),(err,res)=>{
+                         if (err) throw err;
+                         else console.log('Employee successfully added!');
+                    })
                     break;
                 case 'Go Back':
                     dbSearch();
                     break;
             }
+            dbSearch();
         })
 }
 
-//Function to view employees by department, role, their manager, and all of them
+//Function to view employees by department, role, their manager, or all of them
 const view=()=>{
     inquirer
         .prompt({
