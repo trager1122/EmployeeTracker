@@ -82,7 +82,15 @@ const add=()=>{
                    })
                     break;
                 case 'Employee':
-                    connection.query(employee.add(),(err,res)=>{
+                    const emp_Roles=[connection.query('SELECT title from Role',(err,res)=>{
+                        if (err) throw err;
+                        else return res;
+                    })]
+                    const emp_Names=[connection.query('SELECT id,first_name+" "+ last_name from Employee',(err,res)=>{
+                        if (err) throw err;
+                        else return res;
+                    })]
+                    connection.query(employee.add(emp_Roles,emp_Names),(err,res)=>{
                          if (err) throw err;
                          else console.log('Employee successfully added!');
                     })
