@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: 'H@dlee!',
+    password: 'H@dlee',
     database: 'employee_DB',
 });
 
@@ -120,19 +120,21 @@ const view=()=>{
         .then((select)=>{
             switch(select.view){
                 case 'Departments':
+                    console.log('Current Departments');
                     connection.query(department.view(),(err,res)=>{
                         if (err) throw err;
                         cTable(res);
                     })
                     break;
                 case 'Role':
-                    console.log('Current employee roles')
+                    console.log('Current employee roles');
                     connection.query(role.view(),(err,res)=>{
                         if (err) throw err;
                         cTable(res);
                     })
                     break;
                 case 'Employees':
+                    console.log('Current Employee Roster');
                     connection.query(employee.view(),(err,res)=>{
                         if (err) throw err;
                         cTable(res);
@@ -144,41 +146,58 @@ const view=()=>{
             }
             dbSearch();
         })
-
 }
 
-//Function to update the role or manager of an employee
+//Function to update an employee role
 const update=()=>{
+    const emp_Roles=[connection.query('SELECT title from Role',(err,res)=>{
+        if (err) throw err;
+        else return res;
+    })];
     inquirer
         .prompt({
             name: 'update',
             type: 'list',
-            message: 'What would you like to update?',
-            choices: [
-                'Department',
-                'Employee Role',
-                'Employee',
-                'Go Back'
-            ]
+            message: 'What employee role would you like to update?',
+            choices: [...emp_Roles,'Go Back']
         })
         .then((select)=>{
-            switch(select.update){
-                case 'Department':
-                    department.update();
-                    break;
-                case 'Employee Role':
-                    role.update();
-                    break;
-                case 'Employee':
-                    employee.update();
-                    break;
-                case 'Go Back':
-                    dbSearch();
-                    break;
-            }
-        })
-
-}
+            const roleQuery=connection.query('SELECT title,salary,department_id FROM Role WHERE title=?',{title:select.update},(err,res)=>{
+                console.log('Current Role Information');
+                cTable(res);
+            })
+            inquirer
+                .prompt([
+                {
+                    name: 'jobTitle',
+                    type: 'input',
+                    message: 'Enter current job title or the new job title you would to give this role'
+                },
+                {  
+                    name: 'jobSalary',
+                    type: 'input',
+                    message: 'Enter the current salary of this role or the new salary for this role'
+                },
+                {
+                    name: 'jobDeptID',
+                    type: 'input',
+                    message: 'Enter the current department ID for this role or the new department ID for this role'
+                }])
+                .then((data)=>{
+                    const updateQuery='UPDATE Role SET title='+data.jobTitle+
+                                        ' SET salary='+data.jobSalary+
+                                        ' SET department_id='+data.jobDeptID+
+                                        ' WHERE title='+select.update;
+                    connection.query(updateQuery,(err,current)=>{
+                        if (err) throw err;
+                        else{
+                            console.log('Role updated successfullly!');
+                            cTable(current);
+                        }
+                    })
+                })       
+        });
+};
 
 //Function to delete a department, role, or employee
 const remove=()=>{
