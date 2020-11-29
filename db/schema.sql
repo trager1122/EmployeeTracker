@@ -1,32 +1,28 @@
-/* Schema for SQL database/table. We haven't discussed this type of file yet */
-DROP DATABASE IF EXISTS employee_DB;
+DROP DATABASE IF EXISTS employee_db;
 
-/* Create database */
-CREATE DATABASE employee_DB;
-USE employee_DB;
+CREATE DATABASE employee_db;
+USE employee_db;
 
-/* Create new table with a primary key*/
+
 CREATE TABLE Department(
-    id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    name VARCHAR(30),
-)
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(30)
+);
 
-CREATE TABLE Role(
-    id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+CREATE TABLE Job(
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL UNSIGNED,
-    department_id INT NOT NULL,
+    department_id INT UNSIGNED,
     FOREIGN KEY (department_id) REFERENCES Department(id)
-)
+);
 
 CREATE TABLE Employee(
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
-  role_id INT NOT NULL,
+  role_id INT UNSIGNED,
   manager_id INT UNSIGNED NULL,
-  FOREIGN KEY (role_id) REFERENCES Role(id),
+  FOREIGN KEY (role_id) REFERENCES Job(id),
   FOREIGN KEY (manager_id) REFERENCES Employee(id)
-)
-
-
+);
