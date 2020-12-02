@@ -9,12 +9,9 @@ const connection = mysql.createConnection({
     database: 'employee_db',
 });
 
-const department=require ('./lib/department');
-const role=require ('./lib/role');
-const employee=require('./lib/employee');
-const Employee = require('./lib/employee');
-const Department = require('./lib/department');
-const Role = require('./lib/role');
+const Department=require ('./lib/department');
+const Role=require ('./lib/role');
+const Employee=require('./lib/employee');
 
 connection.connect((err) => {
     if (err) throw err;
@@ -56,8 +53,22 @@ const dbSearch=()=>{
         })
 } 
 
+
+
 //Function to add a department, employee role, or employee
 const add=()=>{
+    var empRoles=[];
+    var empNames=[];
+    connection.query("SELECT title FROM Job", (err,res)=>{
+        for(var i=0; i<res.length; i++){
+                empRoles.push(res[i].title);
+        }
+    connection.query("SELECT id,first_name,last_name FROM Employee", (err,res)=>{
+            for(var i=0; i<res.length; i++){
+                    empNames.push((res[i].id.toString())+' '+res[i].first_name+' '+res[i].last_name);
+            }
+            console.log(empNames);
+    })
     inquirer
         .prompt({
             name: 'add',
@@ -84,19 +95,13 @@ const add=()=>{
                     connection.query(newJob.add(),(err,res)=>{
                         if (err) throw err;
                         else console.log('Employee Role successfully added!');
-                   })
+                    })
+                    dbSearch();
                     break;
                 case 'Employee':
-                    const emp_Roles=[connection.query('SELECT title from Job',(err,res)=>{
-                        if (err) throw err;
-                        else return res;
-                    })]
-                    const emp_Names=[connection.query('SELECT id,first_name+" "+ last_name from Employee',(err,res)=>{
-                        if (err) throw err;
-                        else return res;
-                    })]
                     const newEmployee=new Employee();
-                    connection.query(newEmployee.add(emp_Roles,emp_Names),(err,res)=>{
+                    const addEmployee=newEmployee.add(empRoles,empNames);
+                    connection.query(addEmployee,(err,res)=>{
                          if (err) throw err;
                          else console.log('Employee successfully added!');
                     })
@@ -106,6 +111,7 @@ const add=()=>{
                     break;
             }
         })
+    })
 }
 
 //Function to view employees by department, role, their manager, or all of them
@@ -130,6 +136,7 @@ const view=()=>{
                     connection.query(depts.view(),(err,res)=>{
                         if (err) throw err;
                         console.table(res);
+                        dbSearch();
                     })
                     break;
                 case 'Employee Roles':
@@ -138,6 +145,7 @@ const view=()=>{
                     connection.query(jobs.view(),(err,res)=>{
                         if (err) throw err;
                         console.table(res);
+                        dbSearch();
                     })
                     break;
                 case 'Employees':
@@ -146,13 +154,13 @@ const view=()=>{
                     connection.query(employees.view(),(err,res)=>{
                         if (err) throw err;
                         console.table(res);
+                        dbSearch();
                     })
                     break;
                 case 'Go Back':
                     dbSearch();
                     break;
             }
-            dbSearch();
         })
 }
 
