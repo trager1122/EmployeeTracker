@@ -53,21 +53,25 @@ const dbSearch=()=>{
         })
 } 
 
-
-
 //Function to add a department, employee role, or employee
 const add=()=>{
     var empRoles=[];
     var empNames=[];
-    connection.query("SELECT title FROM Job", (err,res)=>{
+    var depts=[];
+    connection.query("SELECT id,title FROM Job", (err,res)=>{
         for(var i=0; i<res.length; i++){
-                empRoles.push(res[i].title);
+                empRoles.push((res[i].id.toString())+' '+res[i].title);
         }
+    })
     connection.query("SELECT id,first_name,last_name FROM Employee", (err,res)=>{
             for(var i=0; i<res.length; i++){
                     empNames.push((res[i].id.toString())+' '+res[i].first_name+' '+res[i].last_name);
             }
-            console.log(empNames);
+    })
+    connection.query('SELECT id,name FROM Department',(err,res)=>{
+            for(var i=0; i<res.length; i++){
+                  depts.push((res[i].id[1].toString())+' '+res[i].name);
+              }
     })
     inquirer
         .prompt({
@@ -85,33 +89,21 @@ const add=()=>{
             switch(select.add){
                 case 'Department':
                     const dept=new Department();
-                    connection.query(dept.add(),(err,res)=>{
-                        if (err) throw err;
-                        else console.log('Department successfully added!');
-                   })
+                    dept.add(connection,dbSearch);
                     break;
                 case 'Employee Role':
                     const newJob=new Role();
-                    connection.query(newJob.add(),(err,res)=>{
-                        if (err) throw err;
-                        else console.log('Employee Role successfully added!');
-                    })
-                    dbSearch();
+                    newJob.add(connection,dbSearch,depts);
                     break;
                 case 'Employee':
                     const newEmployee=new Employee();
-                    const addEmployee=newEmployee.add(empRoles,empNames);
-                    connection.query(addEmployee,(err,res)=>{
-                         if (err) throw err;
-                         else console.log('Employee successfully added!');
-                    })
+                    newEmployee.add(connection,dbSearch,empRoles,empNames);
                     break;
                 case 'Go Back':
                     dbSearch();
                     break;
             }
         })
-    })
 }
 
 //Function to view employees by department, role, their manager, or all of them
@@ -166,19 +158,19 @@ const view=()=>{
 
 //Function to update an employee role
 const update=()=>{
+    var empRoles=[];
     connection.query('SELECT title from Job',(err,res)=>{
         if (err) throw err;
         else{
-            var emp_Roles=[];
             for(var i=0; i<res.length; i++){
-                emp_Roles.push(res[i].title);
+                empRoles.push(res[i].title);
             }
             inquirer
                 .prompt({
                     name: 'update',
                     type: 'list',
                     message: 'What employee role would you like to update?',
-                    choices: [...emp_Roles,'Go Back']
+                    choices: [...empRoles,'Go Back']
                 })
                 .then((select)=>{
                     if (select.update==='Go Back'){
