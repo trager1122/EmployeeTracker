@@ -55,24 +55,6 @@ const dbSearch=()=>{
 
 //Function to add a department, employee role, or employee
 const add=()=>{
-    var empRoles=[];
-    var empNames=[];
-    var depts=[];
-    connection.query("SELECT id,title FROM Job", (err,res)=>{
-        for(var i=0; i<res.length; i++){
-                empRoles.push((res[i].id.toString())+' '+res[i].title);
-        }
-    })
-    connection.query("SELECT id,first_name,last_name FROM Employee", (err,res)=>{
-            for(var i=0; i<res.length; i++){
-                    empNames.push((res[i].id.toString())+' '+res[i].first_name+' '+res[i].last_name);
-            }
-    })
-    connection.query('SELECT id,name FROM Department',(err,res)=>{
-            for(var i=0; i<res.length; i++){
-                  depts.push((res[i].id[1].toString())+' '+res[i].name);
-              }
-    })
     inquirer
         .prompt({
             name: 'add',
@@ -93,11 +75,11 @@ const add=()=>{
                     break;
                 case 'Employee Role':
                     const newJob=new Role();
-                    newJob.add(connection,dbSearch,depts);
+                    newJob.add(connection,dbSearch);
                     break;
                 case 'Employee':
                     const newEmployee=new Employee();
-                    newEmployee.add(connection,dbSearch,empRoles,empNames);
+                    newEmployee.add(connection,dbSearch);
                     break;
                 case 'Go Back':
                     dbSearch();
@@ -203,7 +185,6 @@ const update=()=>{
                                             if (err) throw err;
                                             else{
                                                 console.log('Role updated successfullly!');
-                                                console.table(current);
                                                 dbSearch();
                                             }
                                         })
