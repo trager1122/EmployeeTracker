@@ -173,7 +173,7 @@ const update=()=>{
                                         },
                                         {  
                                         name: 'jobSalary',
-                                        type: 'input',
+                                        type: 'number',
                                         message: 'Enter the current salary of this role or the new salary for this role'
                                         }
                                     ])
