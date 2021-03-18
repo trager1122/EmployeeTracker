@@ -5,6 +5,8 @@ This is an employee tracker app that allows a manager to do the following:
     -View employee roster, current departments, and employee roles
     -Update the title and salary for an employee role
 
+To run (please have Node installed): node employee.js
+
 GitHub Repository: https://github.com/trager1122/EmployeeTracker
 
 ![image](https://user-images.githubusercontent.com/69808653/101064112-a1f1a480-3561-11eb-83e4-271ad9049e4c.png)
